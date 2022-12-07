@@ -26,6 +26,21 @@ const db = mysql.createConnection(
 // db.query('SELECT * FROM students', function (err, results) {
 //     console.log(results);
 // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 // Default response for any other request (Not Found)
 app.use((req, res) => {
