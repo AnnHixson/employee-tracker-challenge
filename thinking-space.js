@@ -109,7 +109,24 @@ function addDepartment() {
         })
 }
 
+let departmentsList = [];
+function getDepartmentList() {
+    const departmentQuery = 'SELECT name FROM department';
+    db.query(departmentQuery, function (err, results) {
+        for (let i = 0; i < results.length; i++) {
+            const departmentOption = {
+                value: i + 1,
+                name: results[i].name
+            }
+            departmentsList.push(departmentOption)
+        }
+    });
+}
+
+
+
 function addRole() {
+    getDepartmentList();
     inquirer
         .prompt([
             {
@@ -123,11 +140,67 @@ function addRole() {
                 message: 'What is the salary of the role?',
             },
             {
-                type: 'input',
-                name: 'newRole',
-                message: 'What is the name of the role?',
+                type: 'list',
+                name: 'newRoleDepartment',
+                message: 'What department does the role belong to?',
+                choices: departmentsList,
             },
         ])
+        .then((data) => {
+            let departmentId = 2;
+            for (let i = 0; i < departmentsList.length; i++) {
+                if (data.newRoleDepartment === departmentsList[i].name) {
+                    console.log('match found');
+                    let departmentId = departmentsList[i].value;
+                    // return departmentId;
+                } else {
+                    console.log('break time');
+                    let departmentId = 3;
+                    // return departmentId
+                }
+            }
+            
+            // getDepartmentId(data);
+            // console.log(data.newRoleDepartment.departmentsList.value);
+            db.connect(function(err) {
+                if (err) throw err;
+                console.log('step 1 = yes');
+                const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${data.newRole}', '${data.newSalary}', '${departmentId}')`;
+                db.query(sql, function (err, result) {
+                    if (err) {console.log(err)};
+                    console.log(`Role ${data.newRole} added.`);
+                });
+            });
+            presentMenu();
+        })
+}
+
+function getDepartmentId(data) {
+    const departmentQuery = 'SELECT name FROM department';
+    
+    db.query(departmentQuery, function (err, results) {
+        for (let i = 0; i < results.length; i++) {
+            
+            const departmentOption = {
+                value: i + 1,
+                name: results[i].name
+            }
+            let departmentId = departmentOption.value
+
+            if(data.newRoleDepartment === departmentOption.name) {
+                return console.log('match found')
+                // return departmentId = departmentOption.value
+            } else if(err) {
+                console.log(err)
+            } else {
+                let departmentId = 3
+                return departmentId
+            }
+            
+        }
+
+    });
+
 }
 
 function addEmployee() {}

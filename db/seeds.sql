@@ -1,32 +1,23 @@
 INSERT INTO department (name)
 VALUES
-    ("Food"),
-    ("Medicine"),
-    ("Entertainment"),
-    ("Navigation"),
-    ("Protection"),
-    ("Crafting");
+    ("Oxventure"),
+    ("Straw Hats"),
+    ("Pokemon");
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-    ("Chef", 177000000),
-    ("Navigator", 366000000),
-    ("Doctor", 100),
-    ("Captain", 3000000000),
-    ("Swordsman", 1111000000),
-    ("Sniper", 200000000),
-    ("Shipwright", 94000000),
-    ("Musician", 83000000),
-    ("Archaeologist", 930000000);
+    ("Rogue", 502, 1),
+    ("Captain", 3000, 2),
+    ("Warlock", 667, 1),
+    ("Water", 300, 3),
+    ("Fire", 250, 3),
+    ("Navigator", 1000, 2);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-    ("Luffy", "Monkey D."),
-    ("Zoro", "Roronoa"),
-    ("Nami"),
-    ("Usopp"),
-    ("Sanji", "Vinsmoke"),
-    ("Chopper", "Tony Tony"),
-    ("Robin", "Nico"),
-    ("Franky"),
-    ("Brook");
+    ("Luffy", "Straw-Hat", 2, null),
+    ("Charizard", "003", 5, 5),
+    ("Corazon", "de Ballena", 1, null),
+    ("Prudence", "Tiefling", 3, null),
+    ("Blastoise", "009", 4, null),
+    ("Nami", "Straw-Hat", 6, 1);
