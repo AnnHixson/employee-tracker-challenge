@@ -80,6 +80,7 @@ function useMenu({ menu }) {
             break;
         // Selection: Update An Employee Role
         case "Update an employee role":
+            updateEmployee();
             break;
         default:
             console.log('Something went wrong in the useMenu switch...')
@@ -98,7 +99,6 @@ function addDepartment() {
         .then((data) => {
             db.connect(function(err) {
                 if (err) throw err;
-                console.log('step 1 = yes');
                 const sql = `INSERT INTO department (name) VALUES ('${data.newDepartment}')`;
                 db.query(sql, function (err, result) {
                     if (err) throw err;
@@ -150,7 +150,6 @@ function addRole() {
         .then((data) => {
             db.connect(function(err) {
                 if (err) throw err;
-                console.log('step 1 = yes');
                 const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${data.newRole}', '${data.newSalary}', '${data.newRoleDepartment}')`;
                 db.query(sql, function (err, result) {
                     if (err) {console.log(err)};
@@ -194,6 +193,7 @@ function getManagerList() {
         }
     });
 }
+
 function addEmployee() {
     getRoleList();
     getManagerList();
@@ -225,7 +225,6 @@ function addEmployee() {
         .then((data) => {
             db.connect(function(err) {
                 if (err) throw err;
-                console.log('step 1 = yes');
                 const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${data.newFirstName}', '${data.newLastName}', '${data.newEmployeeRole}', '${data.newManager}')`;
                 db.query(sql, function (err, result) {
                     if (err) {console.log(err)};
@@ -236,7 +235,62 @@ function addEmployee() {
         })
 }
 
-function updateEmployee() {}
+let employeesList = [];
+function getEmployeeList() {
+    const employeeQuery = 'SELECT first_name, last_name FROM employee';
+    db.query(employeeQuery, function (err, results) {
+        for (let i = 0; i < results.length; i++) {
+            const employeeOption = {
+                value: i + 1,
+                name: results[i].first_name + results[i].last_name
+            }
+            // Not preventing duplicates !!!
+            if (!employeesList.includes(employeeOption)) {
+                employeesList.push(employeeOption)
+            }
+        }
+    });
+}
+
+function updateEmployee() {
+    getEmployeeList();
+    // console.log(employeesList);
+    getRoleList();
+    inquirer
+        .prompt([
+            // Necessary for unknown reasons
+            {
+                type: 'input',
+                name: 'testThis',
+                message: 'Type something to test',
+            },
+            {
+                type: 'list',
+                name: 'updateEmployee',
+                message: 'Which employee do you want to update?',
+                choices: employeesList,
+            },
+            {
+                type: 'list',
+                name: 'updateEmployeeRole',
+                message: 'What is the employee\'s new role?',
+                choices: rolesList,
+            },
+        ])
+        .then((data) => {
+            db.connect(function(err) {
+                if (err) throw err;
+                const sql = `UPDATE employee
+                SET role_id = ${data.updateEmployeeRole}
+                WHERE e_id = ${data.updateEmployee}`;
+                db.query(sql, function (err, result) {
+                    if (err) {console.log(err)};
+                    console.log(`Employee ${data.updateEmployee} updated.`);
+                });
+            });
+            presentMenu();
+        })
+}
 
 presentMenu();
 
