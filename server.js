@@ -1,15 +1,7 @@
 // Required Packages
-const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-
-// Express Setup
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 // Connect to database
 const db = mysql.createConnection(
@@ -24,7 +16,7 @@ const db = mysql.createConnection(
 
 // Functionality
 
-    // Present Menu
+// Present Menu
 function presentMenu() {
     inquirer
         .prompt([
@@ -87,6 +79,7 @@ function useMenu({ menu }) {
     }
 }
 
+// Add a department
 function addDepartment() {
     inquirer
         .prompt([
@@ -109,6 +102,7 @@ function addDepartment() {
         })
 }
 
+// Get a list of departments
 let departmentsList = [];
 function getDepartmentList() {
     const departmentQuery = 'SELECT name FROM department';
@@ -118,7 +112,6 @@ function getDepartmentList() {
                 value: i + 1,
                 name: results[i].name
             }
-            // Not preventing duplicates !!!
             if (!departmentsList.includes(departmentOption)) {
                 departmentsList.push(departmentOption)
             }
@@ -126,6 +119,7 @@ function getDepartmentList() {
     });
 }
 
+// Add a role
 function addRole() {
     getDepartmentList();
     inquirer
@@ -160,6 +154,7 @@ function addRole() {
         })
 }
 
+// Get a list of roles
 let rolesList = [];
 function getRoleList() {
     const roleQuery = 'SELECT title FROM role';
@@ -169,7 +164,6 @@ function getRoleList() {
                 value: i + 1,
                 name: results[i].title
             }
-            // Not preventing duplicates !!!
             if (!rolesList.includes(roleOption)) {
                 rolesList.push(roleOption)
             }
@@ -177,6 +171,7 @@ function getRoleList() {
     });
 }
 
+// Get a list of managers
 let managersList = [{value: 0, name: 'null'}];
 function getManagerList() {
     const managerQuery = 'SELECT first_name, last_name FROM employee';
@@ -184,9 +179,8 @@ function getManagerList() {
         for (let i = 0; i < results.length; i++) {
             const managerOption = {
                 value: i + 1,
-                name: results[i].first_name + results[i].last_name
+                name: results[i].first_name + ' ' + results[i].last_name
             }
-            // Not preventing duplicates !!!
             if (!managersList.includes(managerOption)) {
                 managersList.push(managerOption)
             }
@@ -194,6 +188,7 @@ function getManagerList() {
     });
 }
 
+// Add an employee
 function addEmployee() {
     getRoleList();
     getManagerList();
@@ -235,6 +230,7 @@ function addEmployee() {
         })
 }
 
+// Get a list of employees
 let employeesList = [];
 function getEmployeeList() {
     const employeeQuery = 'SELECT first_name, last_name FROM employee';
@@ -242,9 +238,8 @@ function getEmployeeList() {
         for (let i = 0; i < results.length; i++) {
             const employeeOption = {
                 value: i + 1,
-                name: results[i].first_name + results[i].last_name
+                name: results[i].first_name + ' ' + results[i].last_name
             }
-            // Not preventing duplicates !!!
             if (!employeesList.includes(employeeOption)) {
                 employeesList.push(employeeOption)
             }
@@ -252,17 +247,17 @@ function getEmployeeList() {
     });
 }
 
+// Update an employee
 function updateEmployee() {
     getEmployeeList();
-    // console.log(employeesList);
     getRoleList();
     inquirer
         .prompt([
-            // Necessary for unknown reasons
+            // Necessary for functionality
             {
                 type: 'input',
-                name: 'testThis',
-                message: 'Type something to test',
+                name: 'necessity',
+                message: 'Please hit "Enter"',
             },
             {
                 type: 'list',
@@ -292,13 +287,5 @@ function updateEmployee() {
         })
 }
 
+// Run the program
 presentMenu();
-
-// Closing Lines
-app.use((req, res) => {
-    res.status(404).end();
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
